@@ -1,24 +1,66 @@
 apiVersion: argoproj.io/v1alpha1
-kind: Application
+kind: ApplicationSet
 metadata:
-  name: catalogue-dev
+  name: roboshop-backend
   namespace: argocd
 spec:
-  project: default
+  generators:
+  - list:
+      elements:
+      - name: cart
+      - name: catalogue
+      - name: payment
+      - name: shipping
+      - name: user
 
-  source:
-    repoURL: https://github.com/rajesh1816/eks-argocd.git
-    targetRevision: main
-    path: catalogue
-    helm:
-      valueFiles:
-        - values-dev.yaml
+  template:
+    metadata:
+      name: '{{name}}'
+    spec:
+      project: default
 
-  destination:
-    server: https://kubernetes.default.svc
-    namespace: roboshop
+      source:
+        repoURL: https://github.com/rajesh1816/eks-argocd.git
+        targetRevision: main
+        path: backend-apps/{{name}}
+        helm:
+          valueFiles:
+            - values-dev.yaml
 
-  syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: roboshop
+
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
+
+
+
+# apiVersion: argoproj.io/v1alpha1
+# kind: Application
+# metadata:
+#   name: catalogue-dev
+#   namespace: argocd
+# spec:
+#   project: default
+
+#   source:
+#     repoURL: https://github.com/rajesh1816/eks-argocd.git
+#     targetRevision: main
+#     path: catalogue
+#     helm:
+#       valueFiles:
+#         - values-dev.yaml
+
+#   destination:
+#     server: https://kubernetes.default.svc
+#     namespace: roboshop
+
+#   syncPolicy:
+#     automated:
+#       prune: true
+#       selfHeal: true
