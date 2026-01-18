@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: catalogue
+  name: catalogue-dev
   namespace: argocd
 spec:
   project: default
@@ -10,6 +10,9 @@ spec:
     repoURL: https://github.com/rajesh1816/eks-argocd.git
     targetRevision: main
     path: catalogue
+    helm:
+      valueFiles:
+        - values-dev.yaml
 
   destination:
     server: https://kubernetes.default.svc
@@ -19,5 +22,3 @@ spec:
     automated:
       prune: true
       selfHeal: true
-    syncOptions:
-      - CreateNamespace=true
